@@ -3,13 +3,15 @@
 
 | Object Name               | Notation   | Length | Plural | Prefix | Suffix | Abbreviation | Char Mask          | Underscores |
 |:--------------------------|:-----------|-------:|:-------|:-------|:-------|:-------------|:-------------------|:------------|
+| Namespace name            | PascalCase |    128 | Yes    | Yes    | No     | No           | [A-z][0-9]         | No          |
 | Class name                | PascalCase |    128 | No     | No     | Yes    | No           | [A-z][0-9]         | No          |
 | Constructor name          | PascalCase |    128 | No     | No     | Yes    | No           | [A-z][0-9]         | No          |
 | Method name               | PascalCase |    128 | Yes    | No     | No     | No           | [A-z][0-9]         | No          |
 | Method arguments          | camelCase  |    128 | Yes    | No     | No     | Yes          | [A-z][0-9]         | No          |
 | Local variables           | camelCase  |     50 | Yes    | No     | No     | Yes          | [A-z][0-9]         | No          |
 | Constants name            | PascalCase |     50 | No     | No     | No     | No           | [A-z][0-9]         | No          |
-| Field name                | camelCase  |     50 | Yes    | No     | No     | Yes          | [A-z][0-9]         | Yes         |
+| Field name Public         | PascalCase |     50 | Yes    | No     | No     | Yes          | [A-z][0-9]         | No          |
+| Field name Private        | _camelCase |     50 | Yes    | No     | No     | Yes          | _[A-z][0-9]        | Yes         |
 | Properties name           | PascalCase |     50 | Yes    | No     | No     | Yes          | [A-z][0-9]         | No          |
 | Delegate name             | PascalCase |    128 | No     | No     | Yes    | Yes          | [A-z]              | No          |
 | Enum type name            | PascalCase |    128 | Yes    | No     | No     | No           | [A-z]              | No          |
@@ -58,7 +60,7 @@ int iCounter;
 string strName;
 ```
 
-***Why: consistent with the Microsoft's .NET Framework and Visual Studio IDE makes determining types very easy (via tooltips). In general you want to avoid type indicators in any identifier.***
+***Why: consistent with the Microsoft's .NET Framework and Visual Studio IDE makes determining types very easy (via tooltips). In general, you want to avoid type indicators in any identifier.***
 
 #### 4. Do not use Screaming Caps for constants or readonly variables:
 
@@ -99,12 +101,13 @@ UriPart uriPart;
 
 ***Why: consistent with the Microsoft's .NET Framework and prevents inconsistent abbreviations.***
 
-#### 7. Do use PascalCasing for abbreviations 3 characters or more (2 chars are both uppercase):
+
+#### 7. Do use PascalCasing or camelCasing (Depending on the identifier type) for abbreviations 3 characters or more (2 chars are both uppercase when PascalCasing is appropriate or inside the identifier).:
 
 ```csharp  
 HtmlHelper htmlHelper;
-FtpTransfer ftpTransfer;
-UIControl uiControl;
+FtpTransfer ftpTransfer, fastFtpTransfer;
+UIControl uiControl, nextUIControl;
 ```
 
 ***Why: consistent with the Microsoft's .NET Framework. Caps would grab visually too much attention.***
@@ -207,6 +210,9 @@ public partial class Task
 
 ```csharp 
 // Examples
+namespace Company.Technology.Feature.Subnamespace
+{
+}
 namespace Company.Product.Module.SubModule
 {
 }
@@ -378,7 +384,7 @@ public delegate void ReadBarcodeEventHandler(object sender, ReadBarcodeEventArgs
 
 ***Why: consistent with the Microsoft's .NET Framework and easy to read.***
 
-#### 23. Do not create names of parametres in methods (or constructors) which differ only by the register:
+#### 23. Do not create names of parameters in methods (or constructors) which differ only by the register:
 
 ```csharp 
 // Avoid
@@ -390,7 +396,7 @@ private void MyFunction(string name, string Name)
 
 ***Why: consistent with the Microsoft's .NET Framework and easy to read, and also excludes possibility of occurrence of conflict situations.***
 
-#### 24. DO use two parameters named sender and e in event handlers. The sender parameter represents the object that raised the event. The sender parameter is typically of type object, even if it is possible to employ a more specific type.
+#### 24. Do use two parameters named sender and e in event handlers. The sender parameter represents the object that raised the event. The sender parameter is typically of type object, even if it is possible to employ a more specific type.
 
 ```csharp
 public void ReadBarcodeEventHandler(object sender, ReadBarcodeEventArgs e)
@@ -398,8 +404,6 @@ public void ReadBarcodeEventHandler(object sender, ReadBarcodeEventArgs e)
   //...
 }
 ```
-
-***Why: consistent with the Microsoft's .NET Framework***
 
 ***Why: consistent with the Microsoft's .NET Framework and consistent with prior rule of no type indicators in identifiers.***
 
@@ -414,9 +418,40 @@ public class BarcodeReadException : System.Exception
 
 ***Why: consistent with the Microsoft's .NET Framework and easy to read.***
 
-## Offical Reference
+#### 26. Do use prefix Any, Is, Have or similar keywords for boolean identifier:
+
+```csharp 
+// Correct
+public static bool IsNullOrEmpty(string value) {
+    return (value == null || value.Length == 0);
+}
+```
+
+***Why: consistent with the Microsoft's .NET Framework and easy to read.***
+
+#### 27. Use Named Arguments in method calls:
+When calling a method, arguments are passed with the parameter name followed by a colon and a value. 
+
+```csharp
+// Method
+public void DoSomething(string foo, int bar) 
+{
+...
+}
+
+// Avoid
+DoSomething("someString", 1);
+// Correct
+DoSomething(foo: "someString", bar: 1);
+```
+
+***Why: consistent with the Microsoft's .NET Framework and easy to read. In Named Arguments, we do not need to pass the parameters in order as defined on method definition, so we can pass the arguments in any order on method calling.***
+
+## Official Reference
 
 1. [MSDN General Naming Conventions](http://msdn.microsoft.com/en-us/library/ms229045(v=vs.110).aspx)
 2. [DoFactory C# Coding Standards and Naming Conventions](http://www.dofactory.com/reference/csharp-coding-standards) 
 3. [MSDN Naming Guidelines](http://msdn.microsoft.com/en-us/library/xzf533w0%28v=vs.71%29.aspx)
 4. [MSDN Framework Design Guidelines](http://msdn.microsoft.com/en-us/library/ms229042.aspx)
+5. [Common C# Coding Conventions](https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/coding-style/coding-conventions)
+6. [Github C# Coding Style](https://github.com/dotnet/runtime/blob/main/docs/coding-guidelines/coding-style.md)
